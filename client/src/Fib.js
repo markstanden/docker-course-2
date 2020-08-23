@@ -25,6 +25,7 @@ class Fib extends Component {
 
   handleSubmit = async event => {
     event.preventDefault()
+    console.log('index', this.state.index)
     await axios.post('/api/values', {
       index: this.state.index,
     })
@@ -33,6 +34,7 @@ class Fib extends Component {
 
   renderSeenIndexes() {
     const numberList = this.state.seenIndexes.map(({ number }) => number)
+    console.log('numberList', numberList)
     return numberList.join(', ')
   }
 
