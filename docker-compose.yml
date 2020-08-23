@@ -8,6 +8,9 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - '3050:80'
+    depends_on:
+      - api
+      - client
 
   postgres:
     image: 'postgres:latest'
@@ -32,6 +35,8 @@ services:
       - PGDATABASE=postgres
       - PGPASSWORD=pass
       - PGPORT=5432
+    depends_on:
+      - postgres
 
   client:
     stdin_open: true
@@ -50,3 +55,8 @@ services:
     volumes:
       - /app/node_modules
       - ./worker:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis

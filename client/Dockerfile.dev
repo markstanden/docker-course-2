@@ -2,5 +2,6 @@ FROM node:stretch-slim
 WORKDIR '/app'
 COPY ./package.json ./
 RUN npm install
-COPY . .
+COPY ./src ./src
+COPY ./Dockerfile.dev ./Dockerfile.dev
 CMD ["npm", "run", "start"]
