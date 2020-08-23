@@ -22,14 +22,13 @@ function Fib(props) {
   const handleSubmit = async event => {
     event.preventDefault()
     await axios.post('/api/values', {
-      index: inputValue,
+      index: parseInt(inputValue),
     })
     setInputValue('')
   }
 
   function renderSeenIndexes() {
     const numberList = seenIndexes.map(({ number }) => number)
-    console.log('numberList', numberList)
     return numberList.join(', ')
   }
 
@@ -47,9 +46,17 @@ function Fib(props) {
 
   return (
     <div>
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={e => handleSubmit(e)}>
         <label>Enter your Index</label>
-        <input value={inputValue} />
+        <input
+          onChange={e => setInputValue(e.target.value)}
+          autoFocus
+          name="index"
+          id="indexInput"
+          type="text"
+          placeholder=""
+          autoComplete="off"
+        />
         <button>Submit</button>
       </form>
 
