@@ -16,8 +16,12 @@ function App() {
         </header>
         <div>
           <Switch>
-            <Route exact path="/" component={Fib} />
-            <Route path="/otherpage" component={OtherPage} />
+            <Route exact path="/">
+              <Fib />
+            </Route>
+            <Route path="/otherpage">
+              <OtherPage />
+            </Route>
           </Switch>
         </div>
       </div>

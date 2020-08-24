@@ -15,7 +15,8 @@ services:
   postgres:
     image: 'postgres:latest'
     environment:
-      POSTGRES_PASSWORD: pass
+      - POSTGRES_PASSWORD=postgres
+      - PGPASSWORD=postgres
 
   redis:
     image: 'redis:latest'
@@ -31,9 +32,9 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PGUSER=postgres
-      - PGHOST=postres
+      - PGHOST=postgres
       - PGDATABASE=postgres
-      - PGPASSWORD=pass
+      - PGPASSWORD=postgres
       - PGPORT=5432
     depends_on:
       - postgres

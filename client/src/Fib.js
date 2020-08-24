@@ -10,25 +10,35 @@ function Fib(props) {
   fetchIndexes()
 
   async function fetchValues() {
-    const dbValues = await axios.get('/api/values/current')
-    setValues(dbValues.data)
+    const redisValues = await axios.get('/api/values/current')
+    // console.log(dbValues.data)
+    setValues(redisValues.data)
   }
 
   async function fetchIndexes() {
-    const redisIndexes = await axios.get('/api/values/all')
-    setSeenIndexes(redisIndexes.data)
+    const dbIndexes = await axios.get('/api/values/all')
+    console.log('dbIndexes: ', dbIndexes)
+    setSeenIndexes(dbIndexes.data)
   }
 
   const handleSubmit = async event => {
     event.preventDefault()
-    await axios.post('/api/values', {
-      index: parseInt(inputValue),
-    })
-    setInputValue('')
+    const sendInputValue = parseInt(inputValue)
+    //setInputValue('')
+    try {
+      await axios.post('/api/values', {
+        index: sendInputValue,
+      })
+      /*       renderValues()
+      renderSeenIndexes() */
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   function renderSeenIndexes() {
     const numberList = seenIndexes.map(({ number }) => number)
+    console.log(numberList)
     return numberList.join(', ')
   }
 
@@ -37,7 +47,7 @@ function Fib(props) {
     for (let key in values) {
       entries.push(
         <div key={key}>
-          For index {key} I calculated {values[key]}
+          For index {key} - I calculated {values[key]}
         </div>
       )
     }
@@ -48,15 +58,7 @@ function Fib(props) {
     <div>
       <form onSubmit={e => handleSubmit(e)}>
         <label>Enter your Index</label>
-        <input
-          onChange={e => setInputValue(e.target.value)}
-          autoFocus
-          name="index"
-          id="indexInput"
-          type="text"
-          placeholder=""
-          autoComplete="off"
-        />
+        <input name="inputValue" onChange={e => setInputValue(e.target.value)} autoFocus type="text" />
         <button>Submit</button>
       </form>
 

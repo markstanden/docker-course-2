@@ -6,16 +6,11 @@ const redisConfig = {
   retry_strategy: () => 1000,
 }
 
-console.log(redisConfig)
 const redisClient = redis.createClient(redisConfig)
 
 const sub = redisClient.duplicate()
-sub.on('message', (err, values) => {
-  console.log(values)
-})
 
 function fib(index) {
-  console.log('fibbing')
   if (index < 2) return 1
   return fib(index - 1) + fib(index - 2)
 }
