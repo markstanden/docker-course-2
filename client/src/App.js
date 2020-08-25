@@ -10,8 +10,12 @@ function App() {
       <div className="App">
         <header className="App-header">
           <ul>
-            <Link to="/">Home</Link>
-            <Link to="/otherpage">Other Page</Link>
+            <li className="App-header-item">
+              <Link to="/"> | Home | </Link>
+            </li>
+            <li className="App-header-item">
+              <Link to="/otherpage"> | Other Page | </Link>
+            </li>
           </ul>
         </header>
         <div>

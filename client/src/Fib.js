@@ -37,9 +37,31 @@ function Fib(props) {
   /** produce the formatted list of values to display on screen */
   function formatSeenIndexes(dbData) {
     //Take the number value from each record and create a new array of numbers
-    const numberArray = dbData.map(({ number }) => number)
-    // return a comma separated list for display purposes.
-    return numberArray.join(', ')
+    const numberArray = dbData.map(({ number }) => {
+      return parseInt(number)
+    })
+    numberArray.sort((a, b) => a - b)
+    const reducedArray = noDuplicates(numberArray)
+    // return a comma separated list of the sorted numbers for display purposes.
+    return reducedArray.join(', ')
+  }
+
+  function noDuplicates(longArr) {
+    //define a new array
+    let shorterArr = []
+
+    // first item must be unique
+    shorterArr.push(longArr[0])
+
+    //loop the array once big(O) 1n.
+    // if next item is not the same it must be new, so add it to the new array.
+    // this way it also checks the last item in the array and adds if unique.
+    for (let i = 0; i < longArr.length - 1; i++) {
+      if (longArr[i] != longArr[i + 1]) {
+        shorterArr.push(longArr[i + 1])
+      }
+    }
+    return shorterArr
   }
 
   const handleInputChange = inputText => setInputBoxValue(inputText)
@@ -71,9 +93,10 @@ function Fib(props) {
 
   return (
     <div>
+      <h1> Fibonacci Sequence Number Cruncher </h1>
       <form onSubmit={e => handleSubmit(e)}>
         <label className="fib_form_label">
-          <p>Enter your Index : </p>
+          <p>Enter the index you want to crunch : </p>
         </label>
         <div className="fib_input_wrapper">
           <input
