@@ -1,48 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 function Fib(props) {
-  const [values, setValues] = useState([])
-  const [seenIndexes, setSeenIndexes] = useState([])
-  const [inputValue, setInputValue] = useState('')
+  const [prevCalcValues, setPrevCalcValues] = useState('')
+  const [seenIndexes, setSeenIndexes] = useState('')
+  const [inputBoxValue, setInputBoxValue] = useState('')
 
-  fetchValues()
-  fetchIndexes()
-
+  /** Get the currently sent and calculated values from the redis server */
   async function fetchValues() {
+    console.log('fetching')
     const redisValues = await axios.get('/api/values/current')
-    // console.log(dbValues.data)
-    setValues(redisValues.data)
+    setPrevCalcValues(formatValues(redisValues.data))
   }
 
-  async function fetchIndexes() {
-    const dbIndexes = await axios.get('/api/values/all')
-    console.log('dbIndexes: ', dbIndexes)
-    setSeenIndexes(dbIndexes.data)
-  }
-
-  const handleSubmit = async event => {
-    event.preventDefault()
-    const sendInputValue = parseInt(inputValue)
-    //setInputValue('')
-    try {
-      await axios.post('/api/values', {
-        index: sendInputValue,
-      })
-      /*       renderValues()
-      renderSeenIndexes() */
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  function renderSeenIndexes() {
-    const numberList = seenIndexes.map(({ number }) => number)
-    console.log(numberList)
-    return numberList.join(', ')
-  }
-
-  function renderValues() {
+  /** Take the calculated value and produce formatted text */
+  function formatValues(values) {
     const entries = []
     for (let key in values) {
       entries.push(
@@ -54,19 +26,52 @@ function Fib(props) {
     return entries
   }
 
+  /** Get the postgres stored indexes */
+  async function fetchIndexes() {
+    const dbIndexes = await axios.get('/api/values/all')
+    setSeenIndexes(formatSeenIndexes(dbIndexes.data))
+  }
+
+  /** produce the formatted list of values to display on screen */
+  function formatSeenIndexes(dbData) {
+    //Take the number value from each record and create a new array of numbers
+    const numberArray = dbData.map(({ number }) => number)
+    // return a comma separated list for display purposes.
+    return numberArray.join(', ')
+  }
+
+  const handleInputChange = inputText => setInputBoxValue(inputText)
+
+  const handleSubmit = async event => {
+    event.preventDefault()
+    const sendInputValue = parseInt(inputBoxValue)
+    setInputBoxValue('')
+    try {
+      await axios.post('/api/values', {
+        index: sendInputValue,
+      })
+    } catch (e) {
+      console.log(e)
+    }
+
+    // once the post has submitted refetch values
+    fetchValues()
+    fetchIndexes()
+  }
+
   return (
     <div>
       <form onSubmit={e => handleSubmit(e)}>
         <label>Enter your Index</label>
-        <input name="inputValue" onChange={e => setInputValue(e.target.value)} autoFocus type="text" />
+        <input name="inputValue" onChange={e => handleInputChange(e.target.value)} autoFocus type="text" />
         <button>Submit</button>
       </form>
 
       <h3>Indexes I have seen</h3>
-      {renderSeenIndexes()}
+      {seenIndexes}
 
       <h3>Calculated values</h3>
-      {renderValues()}
+      {prevCalcValues}
     </div>
   )
 }
